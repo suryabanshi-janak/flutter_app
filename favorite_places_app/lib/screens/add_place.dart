@@ -1,3 +1,4 @@
+import 'package:favorite_places_app/widgets/image_input.dart';
 import 'package:flutter/material.dart';
 
 class AddPlaceScreen extends StatefulWidget {
@@ -37,7 +38,9 @@ class _AddPlaceScreen extends State<AddPlaceScreen> {
                 color: Theme.of(context).colorScheme.onBackground,
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 10),
+            ImageInput(),
+            const SizedBox(height: 16),
             ElevatedButton.icon(
               onPressed: () {},
               icon: const Icon(Icons.add),
