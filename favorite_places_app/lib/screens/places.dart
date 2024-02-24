@@ -1,17 +1,22 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'package:favorite_places_app/providers/user_places.dart';
 import 'package:favorite_places_app/screens/add_place.dart';
 import 'package:favorite_places_app/widgets/place_list.dart';
-import 'package:flutter/material.dart';
 
-class PlacesScreen extends StatefulWidget {
+class PlacesScreen extends ConsumerStatefulWidget {
   const PlacesScreen({super.key});
 
   @override
-  State<PlacesScreen> createState() => _PlacesScreenState();
+  ConsumerState<PlacesScreen> createState() => _PlacesScreenState();
 }
 
-class _PlacesScreenState extends State<PlacesScreen> {
+class _PlacesScreenState extends ConsumerState<PlacesScreen> {
   @override
   Widget build(BuildContext context) {
+    final places = ref.watch(userPlacesProvider);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Your Places'),
@@ -28,8 +33,11 @@ class _PlacesScreenState extends State<PlacesScreen> {
           ),
         ],
       ),
-      body: const PlaceList(
-        places: [],
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: PlaceList(
+          places: places,
+        ),
       ),
     );
   }
