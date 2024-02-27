@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:chat_app/widgets/user_image_picker.dart';
 
@@ -19,9 +20,10 @@ class AuthScreen extends StatefulWidget {
 
 class _AuthScreen extends State<AuthScreen> {
   final _form = GlobalKey<FormState>();
-  var _isLogin = false;
+  var _isLogin = true;
   var _enteredEmail = '';
   var _enteredPassword = '';
+  var _enteredUsername = '';
   File? _pickedImage;
   var _isAuthenticating = false;
 
@@ -55,7 +57,15 @@ class _AuthScreen extends State<AuthScreen> {
             .child('${userCredentials.user!.uid}.jpg');
         await storageRef.putFile(_pickedImage!);
         final imageUrl = await storageRef.getDownloadURL();
-        print(imageUrl);
+
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(userCredentials.user!.uid)
+            .set({
+          'username': _enteredUsername,
+          'email': _enteredEmail,
+          'image_url': imageUrl,
+        });
       }
     } on FirebaseAuthException catch (err) {
       if (!context.mounted) {
@@ -125,6 +135,21 @@ class _AuthScreen extends State<AuthScreen> {
                               _enteredEmail = value!;
                             },
                           ),
+                          if (!_isLogin)
+                            TextFormField(
+                                decoration: const InputDecoration(
+                                  label: Text('Username'),
+                                ),
+                                validator: (value) {
+                                  if (value == null ||
+                                      value.trim().length < 4) {
+                                    return 'Please enter atleast 4 characters.';
+                                  }
+                                  return null;
+                                },
+                                onSaved: (value) {
+                                  _enteredUsername = value!;
+                                }),
                           TextFormField(
                             decoration:
                                 const InputDecoration(label: Text('Password')),
